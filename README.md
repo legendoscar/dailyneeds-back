@@ -1,0 +1,2 @@
+# foodme
+Foodme is a comprehensive multi-restaurant food ordering &amp; delivery app that allows customers to place food orders online from any of the registered restaurants in an area using their smartphone or tablet device and get it delivered to their doorsteps in a quick and efficient manner.  It provides an Admin Dashboard, a Restaurant dashboard, a Delivery Application, and a full-fledged Customer dashboard.
