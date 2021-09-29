@@ -15,7 +15,7 @@ class CreateDriversTable extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->string('uname');
+            $table->string('username')->unique();
             $table->string('phone')->unique();
             $table->string('email')->unique();
             $table->string('password');

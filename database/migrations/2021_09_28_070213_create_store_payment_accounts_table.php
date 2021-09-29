@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRestPaymentAccountsTable extends Migration
+class CreateStorePaymentAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateRestPaymentAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rest_payment_accounts', function (Blueprint $table) {
+        Schema::create('store_payment_accounts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('restaurant_id');
             $table->string('account_name');
@@ -31,6 +31,6 @@ class CreateRestPaymentAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rest_payment_accounts');
+        Schema::dropIfExists('store_payment_accounts');
     }
 }

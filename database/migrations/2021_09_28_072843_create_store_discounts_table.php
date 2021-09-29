@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRestDiscountsTable extends Migration
+class CreateStoreDiscountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateRestDiscountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rest_discounts', function (Blueprint $table) {
+        Schema::create('store_discounts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('rest_id');
+            $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('product_id');
             $table->string('discount_title')->nullable();
             $table->text('discount_body')->nullable();
@@ -31,7 +31,7 @@ class CreateRestDiscountsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('rest_id')->references('id')->on('restaurants');
+            $table->foreign('store_id')->references('id')->on('stores');
             $table->foreign('product_id')->references('id')->on('products');
         });
     }
@@ -43,6 +43,6 @@ class CreateRestDiscountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rest_discounts');
+        Schema::dropIfExists('store_discounts');
     }
 }
