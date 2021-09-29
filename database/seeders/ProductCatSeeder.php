@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class ProductCatSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,9 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call('UsersTableSeeder');
-        $this->call([
-            ProductCatSeeder::class,
+        //
+        DB::table('products')->insert([
+            'product_title' => 'soup',
+            'product_desc' => 'Soup is good'
         ]);
     }
 }
