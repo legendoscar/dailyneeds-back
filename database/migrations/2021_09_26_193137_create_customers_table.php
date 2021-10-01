@@ -20,6 +20,7 @@ class CreateCustomersTable extends Migration
             $table->string('cust_phone')->unique();
             $table->string('cust_email')->unique();
             $table->string('cust_image')->nullable();
+            $table->string('password');
             $table->boolean('email_verified')->default(false);
             $table->boolean('phone_verified')->default(false);
             $table->enum('status', ['active', 'suspended', 'deactivated'])->default('active');

@@ -9,6 +9,7 @@
         "auth0/auth0-php": "^7.9",
         "auth0/login": "^6.4",
         "laravel/lumen-framework": "^8.0",
+        "tymon/jwt-auth": "dev-develop",
         "willvincent/laravel-rateable": "^2.3"
     },
     "require-dev": {
@@ -21,7 +22,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+         ]      
     },
     "autoload-dev": {
         "classmap": [

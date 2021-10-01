@@ -60,6 +60,10 @@ $app->singleton(
 */
 
 $app->configure('app');
+ 
+$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+$app->instance('path.public', app()->basePath() . DIRECTORY_SEPARATOR . 'public');
 
 /*
 |--------------------------------------------------------------------------
