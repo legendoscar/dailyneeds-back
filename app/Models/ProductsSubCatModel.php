@@ -19,4 +19,8 @@ Class ProductsSubCatModel extends Model {
     public function all_sub_categories(){
         return $this->all();
     }
+
+    public function ProductCategory(){
+        return $this->hasOne('App\ProductsCatModel');
+    }
 }

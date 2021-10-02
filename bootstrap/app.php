@@ -8,7 +8,7 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 
-/* 
+/*
 |--------------------------------------------------------------------------
 | Create The Application
 |--------------------------------------------------------------------------
@@ -60,7 +60,7 @@ $app->singleton(
 */
 
 $app->configure('app');
- 
+
 $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
 $app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 $app->instance('path.public', app()->basePath() . DIRECTORY_SEPARATOR . 'public');
@@ -80,9 +80,9 @@ $app->instance('path.public', app()->basePath() . DIRECTORY_SEPARATOR . 'public'
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -96,9 +96,9 @@ $app->instance('path.public', app()->basePath() . DIRECTORY_SEPARATOR . 'public'
 */
 
 // $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-
+// $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

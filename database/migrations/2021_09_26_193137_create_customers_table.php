@@ -25,6 +25,7 @@ class CreateCustomersTable extends Migration
             $table->boolean('phone_verified')->default(false);
             $table->enum('status', ['active', 'suspended', 'deactivated'])->default('active');
             $table->timestamps();
+            $table->rememberToken();
             $table->softDeletes();
         });
     }

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-// use App\Models\ProductsCatModel;
-use App\Models\ProductsSubCatModel;
+
 use App\Models\ProductsModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class ProdSubCatController extends Controller
+class ProductsController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -16,32 +15,34 @@ class ProdSubCatController extends Controller
      * @return void
      */
 
-    public function showAllProdSubCat() 
+    public function showAllProducts() 
     {
-
-
-        return response()->json([
-            'data' => ProductsSubCatModel::all(),
+        try{
+            return response()->json([
+            'data' => ProductsModel::all(),
             'statusCode' => 200,
             'msg' => 'Records returned successfully.'
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Product selection failed!',
+                'statusCode' => 409
         ]);
     }
+}
     
 
-    public function showOneprodSubCat(Request $request, $id)
+    public function showOneproduct(Request $request, $id)
     {
-        return $request->all();
-        // return 33;
-        return ProductsSubCatModel::find($id)->ProductCategory;
         return response()->json([
-            'data' => ProductsSubCatModel::find($id),
+            'data' => ProductsModel::find($id),
             'msg' => 'Record returned successfully.',
             'statusCode' => 200
         ]);
     }
 
 
-    public function createprodSubCat(Request $request, ProductsSubCatModel $ProductsSubCatModel)
+    public function createproduct(Request $request, ProductsModel $ProductsModel)
     {
         $val = $this->validate($request,
         [
@@ -68,16 +69,16 @@ class ProdSubCatController extends Controller
 
 
         try{
-            $ProductsSubCatModel = new ProductsSubCatModel;
+            $ProductsModel = new ProductsModel;
 
-            $ProductsSubCatModel->cat_id = $request->cat_id;
-            $ProductsSubCatModel->sub_cat_title = $request->sub_cat_title;
-            $ProductsSubCatModel->sub_cat_desc = $request->sub_cat_desc;
-            $ProductsSubCatModel->sub_cat_image = $image_name;
-            $ProductsSubCatModel->save();
+            $ProductsModel->cat_id = $request->cat_id;
+            $ProductsModel->sub_cat_title = $request->sub_cat_title;
+            $ProductsModel->sub_cat_desc = $request->sub_cat_desc;
+            $ProductsModel->sub_cat_image = $request->sub_cat_image;;
+            $ProductsModel->save();
 
             return response()->json([
-                'data' => $ProductsSubCatModel,
+                'data' => $ProductsModel,
                 'msg' => 'New Record created successfully',
                 'statusCode' => 201
             ]);
@@ -90,7 +91,7 @@ class ProdSubCatController extends Controller
     }
 
 
-    public function updateprodSubCat($id, Request $request)
+    public function updateproduct($id, Request $request)
     {
 
         // return $request->cat_title;
@@ -103,26 +104,26 @@ class ProdSubCatController extends Controller
         $request->updated_at = Carbon::now()->toDateTimeString();
 
 
-        $ProductsSubCatModel = ProductsSubCatModel::findorFail($id);
+        $ProductsModel = ProductsModel::findorFail($id);
 
-        $ProductsSubCatModel->cat_title = $request->cat_title;
-        $ProductsSubCatModel->cat_desc = $request->cat_desc;
-        $ProductsSubCatModel->sub_cat_image = $request->sub_cat_image;;
-        $ProductsSubCatModel->save();
+        $ProductsModel->cat_title = $request->cat_title;
+        $ProductsModel->cat_desc = $request->cat_desc;
+        $ProductsModel->sub_cat_image = $request->sub_cat_image;;
+        $ProductsModel->save();
 
-        // $ProductsSubCatModel->update($request->all());
+        // $ProductsModel->update($request->all());
 
         return response()->json([
-            'data' => $ProductsSubCatModel, 
+            'data' => $ProductsModel, 
             'msg' => 'Records updated successfully.',
             'statusCode' => 200]);
     }
 
 
-    public function deleteprodSubCat($id)
+    public function deleteproduct($id)
     {
 
-        ProductsSubCatModel::findorFail($id)->delete();
+        ProductsModel::findorFail($id)->delete();
         return response([
             'msg' => 'Deleted successfully!', 
             'statusCode' => 200]);
