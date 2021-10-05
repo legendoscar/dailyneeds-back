@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 // use App\Models\ProductsCatModel;
 use App\Models\ProductsSubCatModel;
-use App\Models\ProductsModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -19,25 +18,46 @@ class ProdSubCatController extends Controller
     public function showAllProdSubCat() 
     {
 
-
-        return response()->json([
+       try { 
+           return response()->json([
             'data' => ProductsSubCatModel::all(),
             'statusCode' => 200,
             'msg' => 'Records returned successfully.'
         ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'No record found!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
     
 
     public function showOneprodSubCat(Request $request, $id)
     {
-        return $request->all();
-        // return 33;
-        return ProductsSubCatModel::find($id)->ProductCategory;
-        return response()->json([
-            'data' => ProductsSubCatModel::find($id),
-            'msg' => 'Record returned successfully.',
-            'statusCode' => 200
+        try {
+            $data = ProductsSubCatModel::find($id);
+        !empty($data) 
+            ? $ret = response()->json([
+                'data'=> $data,
+                'msg' => 'Record returned successfully.',
+                'statusCode' => 200
+            ])
+            : $ret = response()->json([
+            'msg' => 'No Record found.',
+            'statusCode' => 404
         ]);
+
+        return $ret;
+
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Ooops! Error encountered!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 
 
@@ -51,6 +71,7 @@ class ProdSubCatController extends Controller
             'sub_cat_image' => 'bail|file',
         ]);
 
+        $image_name = $request->sub_cat_image;
         if($request->hasFile('sub_cat_image')){
             $file = $request->sub_cat_image;
             $image_name = $request->sub_cat_image->getClientOriginalName();
@@ -84,6 +105,7 @@ class ProdSubCatController extends Controller
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'Product Sub_category creation failed!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
@@ -100,14 +122,16 @@ class ProdSubCatController extends Controller
             'sub_cat_image' => 'bail|string',
         ]);
 
-        $request->updated_at = Carbon::now()->toDateTimeString();
+        try {
+            $request->updated_at = Carbon::now()->toDateTimeString();
 
 
         $ProductsSubCatModel = ProductsSubCatModel::findorFail($id);
 
-        $ProductsSubCatModel->cat_title = $request->cat_title;
-        $ProductsSubCatModel->cat_desc = $request->cat_desc;
-        $ProductsSubCatModel->sub_cat_image = $request->sub_cat_image;;
+        $ProductsSubCatModel->cat_id = $request->has('cat_id') ? $request->cat_id : $ProductsSubCatModel->cat_id;
+        $ProductsSubCatModel->sub_cat_title = $request->has('sub_cat_title') ? $request->sub_cat_title : $ProductsSubCatModel->sub_cat_title;
+        $ProductsSubCatModel->sub_cat_desc = $request->has('sub_cat_desc') ? $request->sub_cat_desc : $ProductsSubCatModel->sub_cat_desc;
+        $ProductsSubCatModel->sub_cat_image = $request->has('sub_cat_image') ? $request->sub_cat_image : $ProductsSubCatModel->sub_cat_image;
         $ProductsSubCatModel->save();
 
         // $ProductsSubCatModel->update($request->all());
@@ -116,16 +140,48 @@ class ProdSubCatController extends Controller
             'data' => $ProductsSubCatModel, 
             'msg' => 'Records updated successfully.',
             'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Update operation failed!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 
 
     public function deleteprodSubCat($id)
     {
 
-        ProductsSubCatModel::findorFail($id)->delete();
-        return response([
-            'msg' => 'Deleted successfully!', 
-            'statusCode' => 200]);
+        // return $ProductsSubCatModel->ProductCategory();
+        try {
+            ProductsSubCatModel::findorFail($id)->delete();
+            return response()->json([
+                'msg' => 'Deleted successfully!', 
+                'statusCode' => 200]);
+            }catch(\Exception $e){
+                return response()->json([
+                    'msg' => 'Delete operation failed!',
+                    'err' => $e->getMessage(),
+                    'statusCode' => 409
+                ]);
+        }
+    }
+
+    public function prodSubCatBelongsTo($id){
+        try {
+            $data = ProductsSubCatModel::find($id)->ProductCategory;
+            return response()->json([
+                'msg' => 'Category selection successful!', 
+                'data' => $data,
+                'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Failed to retrieve data!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 
     //

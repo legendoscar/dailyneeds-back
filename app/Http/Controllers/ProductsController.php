@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+// use App\Models\ProductsCatModel;
 use App\Models\ProductsModel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -15,52 +15,77 @@ class ProductsController extends Controller
      * @return void
      */
 
-    public function showAllProducts() 
+    public function showAllProducts()
     {
-        try{
-            return response()->json([
+
+       try {
+           return response()->json([
             'data' => ProductsModel::all(),
             'statusCode' => 200,
             'msg' => 'Records returned successfully.'
-            ]);
+        ]);
         }catch(\Exception $e){
             return response()->json([
-                'msg' => 'Product selection failed!',
+                'msg' => 'No record found!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
-        ]);
-    }
-}
-    
-
-    public function showOneproduct(Request $request, $id)
-    {
-        return response()->json([
-            'data' => ProductsModel::find($id),
-            'msg' => 'Record returned successfully.',
-            'statusCode' => 200
-        ]);
+            ]);
+        }
     }
 
 
-    public function createproduct(Request $request, ProductsModel $ProductsModel)
+    public function showOneProduct(Request $request, $id)
     {
-        $val = $this->validate($request,
+        try {
+        $data = ProductsModel::find($id);
+        !empty($data) 
+            ? $ret = response()->json([
+                'data'=> $data,
+                'msg' => 'Record returned successfully.',
+                'statusCode' => 200
+            ])
+            : $ret = response()->json([
+            'msg' => 'No Record found.',
+            'statusCode' => 404
+        ]);
+
+        return $ret;
+
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Ooops! Error encountered!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
+    }
+
+
+    public function createProduct(Request $request, ProductsModel $ProductsModel)
+    {
+
+        $ProductsModel = new ProductsModel;
+        $this->validate($request,
         [
-            'cat_id' => 'bail|required|numeric|exists:product_categories,id',
-            'sub_cat_title' => 'bail|required|unique:prod_sub_cat|string',
-            'sub_cat_desc' => 'bail|string',
-            'sub_cat_image' => 'bail|file',
+            'cat_id' => 'bail|required|numeric|exists:prod_sub_cat,id',
+            'product_title' => 'bail|required|unique:products|string',
+            'product_desc' => 'bail|string',
+            'product_image' => 'bail|file',
+            'availability_status' => 'bail|string',
+            'amount' => 'numeric'
+            // prod_sub_cat
         ]);
 
-        if($request->hasFile('sub_cat_image')){
-            $file = $request->sub_cat_image;
-            $image_name = $request->sub_cat_image->getClientOriginalName();
+        $image_name = $request->product_image;
+        if($request->hasFile('product_image')){
+            $file = $request->product_image;
+            $image_name = $request->product_image->getClientOriginalName();
 
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
-            $request->file('sub_cat_image')->move($destinationPath, $image_name);
-            
-            if(!$request->file('sub_cat_image')->isValid()){
+            $request->file('product_image')->move($destinationPath, $image_name);
+
+            if(!$request->file('product_image')->isValid()){
                 return response()->json([
                     'msg' => 'Image upload not successful'
                 ]);
@@ -72,9 +97,13 @@ class ProductsController extends Controller
             $ProductsModel = new ProductsModel;
 
             $ProductsModel->cat_id = $request->cat_id;
-            $ProductsModel->sub_cat_title = $request->sub_cat_title;
-            $ProductsModel->sub_cat_desc = $request->sub_cat_desc;
-            $ProductsModel->sub_cat_image = $request->sub_cat_image;;
+            $ProductsModel->product_title = $request->product_title;
+            $ProductsModel->product_desc = $request->product_desc;
+            $ProductsModel->availability_status = $request->availability_status;
+            $ProductsModel->availability_status = $request->availability_status;
+            $ProductsModel->unit = $request->unit;
+            $ProductsModel->product_image = $image_name;
+            $ProductsModel->amount = $request->amount;
             $ProductsModel->save();
 
             return response()->json([
@@ -84,49 +113,90 @@ class ProductsController extends Controller
             ]);
         } catch(\Exception $e){
             return response()->json([
-                'msg' => 'Product Sub_category creation failed!',
+                'msg' => 'Product creation failed!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
     }
 
 
-    public function updateproduct($id, Request $request)
+    public function updateProduct($id, Request $request)
     {
 
         // return $request->cat_title;
-        $this->validate($request, [
-            'cat_title' => 'bail|required|unique:product_categories|string',
-            'cat_desc' => 'bail|string',
-            'sub_cat_image' => 'bail|string',
+        $this->validate($request,
+        [
+            'cat_id' => 'bail|numeric|exists:prod_sub_cat,id',
+            'product_title' => 'bail|unique:products|string',
+            'product_desc' => 'bail|string',
+            'product_image' => 'bail',
+            'availability_status' => 'bail|string',
+            'amount' => 'numeric'
         ]);
 
-        $request->updated_at = Carbon::now()->toDateTimeString();
+        try {
+            $request->updated_at = Carbon::now()->toDateTimeString();
 
 
         $ProductsModel = ProductsModel::findorFail($id);
 
-        $ProductsModel->cat_title = $request->cat_title;
-        $ProductsModel->cat_desc = $request->cat_desc;
-        $ProductsModel->sub_cat_image = $request->sub_cat_image;;
+        $ProductsModel->cat_id = $request->has('cat_id') ? $request->cat_id : $ProductsModel->cat_id;
+        $ProductsModel->product_title = $request->has('product_title') ? $request->product_title : $ProductsModel->product_title;
+        $ProductsModel->product_sub_title = $request->has('product_sub_title') ? $request->product_sub_title : $ProductsModel->product_sub_title;
+        $ProductsModel->product_desc = $request->has('product_desc') ? $request->product_desc : $ProductsModel->product_desc;
+        $ProductsModel->availability_status = $request->has('availability_status') ? $request->availability_status : $ProductsModel->availability_status;
+        $ProductsModel->product_image = $request->has('product_image') ? $request->product_image : $ProductsModel->product_image;
         $ProductsModel->save();
 
         // $ProductsModel->update($request->all());
 
         return response()->json([
-            'data' => $ProductsModel, 
+            'data' => $ProductsModel,
             'msg' => 'Records updated successfully.',
             'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Update operation failed!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 
 
-    public function deleteproduct($id)
+    public function deleteProduct($id)
     {
 
-        ProductsModel::findorFail($id)->delete();
-        return response([
-            'msg' => 'Deleted successfully!', 
-            'statusCode' => 200]);
+        // return $ProductsModel->ProductCategory();
+        try {
+            ProductsModel::findorFail($id)->delete();
+            return response()->json([
+                'msg' => 'Deleted successfully!',
+                'statusCode' => 200]);
+            }catch(\Exception $e){
+                return response()->json([
+                    'msg' => 'Delete operation failed!',
+                    'err' => $e->getMessage(),
+                    'statusCode' => 409
+                ]);
+        }
+    }
+
+    public function ProductBelongsTo($id){
+        try {
+            $data = ProductsModel::find($id)->ProductsCategory;
+            return response()->json([
+                'msg' => 'Category selection successful!',
+                'data' => $data,
+                'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Failed to retrieve data!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
     }
 
     //

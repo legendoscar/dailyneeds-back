@@ -15,7 +15,11 @@ Class ProductsCatModel extends Model {
     protected $fillable = ['cat_title', 'cat_desc', 'cat_image'];
 
 
-    public function all_categories(){
+    public function allCategories(){
         return $this->all();
+    }
+
+    public function subCategory(){
+        return $this->hasMany('App\Models\ProductsSubCatModel', 'id');
     }
 }

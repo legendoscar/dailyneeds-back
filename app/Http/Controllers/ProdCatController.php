@@ -25,6 +25,7 @@ class ProdCatController extends Controller
         }catch(\Exception $e){
             return response()->json([
                 'msg' => 'No record found!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
@@ -34,17 +35,27 @@ class ProdCatController extends Controller
     public function showOneProdCat(Request $request, $id)
     {
         try{
-            return response()->json([
-                'data' => ProductsCatModel::findOrFail($id),
-                'msg' => 'Record returned successfully.',
-                'statusCode' => 200
+            $data = ProductsCatModel::find($id);
+            !empty($data) 
+                ? $ret = response()->json([
+                    'data'=> $data,
+                    'msg' => 'Record returned successfully.',
+                    'statusCode' => 200
+                ])
+                : $ret = response()->json([
+                'msg' => 'No Record found.',
+                'statusCode' => 404
             ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => 'No record found for id: ' . $id . '!',
-                'statusCode' => 409
-            ]);
-        }
+    
+            return $ret;
+    
+            }catch(\Exception $e){
+                return response()->json([
+                    'msg' => 'Ooops! Error encountered!',
+                    'err' => $e->getMessage(),
+                    'statusCode' => 409
+                ]);
+            }
     }
 
 
@@ -89,6 +100,7 @@ class ProdCatController extends Controller
          }catch(\Exception $e){
             return response()->json([
                 'msg' => 'Product Category creation failed!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
@@ -99,14 +111,14 @@ class ProdCatController extends Controller
     {
 
         $this->validate($request, [
-            'cat_title' => 'bail|required|unique:product_categories|string',
+            'cat_title' => 'bail|unique:product_categories|string',
             'cat_desc' => 'bail|string',
-            'cat_image' => 'bail|file',
+            'cat_image' => 'bail', 
         ]);
 
-        $image_name = $request->cat_image;
+        // return $request->cat_image;
         if($request->hasFile('cat_image')){
-            $image_name = $request->cat_image->getClientOriginalName();
+            return $image_name = $request->cat_image->getClientOriginalName();
 
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
@@ -119,9 +131,9 @@ class ProdCatController extends Controller
 
             $ProductsCatModel = ProductsCatModel::findorFail($id);
 
-            $ProductsCatModel->cat_title = $request->cat_title;
-            $ProductsCatModel->cat_desc = $request->cat_desc;
-            $ProductsCatModel->cat_image = $image_name;
+            $ProductsCatModel->cat_title = $request->has('cat_title') ? $request->cat_title : $ProductsCatModel->cat_title;
+            $ProductsCatModel->cat_desc = $request->has('cat_desc') ? $request->cat_desc : $ProductsCatModel->cat_desc;
+            $ProductsCatModel->cat_image = $request->has('cat_image') ? $request->cat_image : $ProductsCatModel->cat_image;
             $ProductsCatModel->save();
 
             return response()->json([
@@ -131,7 +143,8 @@ class ProdCatController extends Controller
         }
         catch(\Exception $e){
             return response()->json([
-                'msg' => 'Product Sub_category update failed!',
+                'msg' => 'Update operation failed!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
@@ -146,8 +159,27 @@ class ProdCatController extends Controller
             'msg' => 'Delete operation successful!', 
             'statusCode' => 200]);
         }catch(\Exception $e){
+            // return $e->getMessage();
             return response()->json([
                 'msg' => 'Delete operation failed! No record found for id: ' . $id . '!',
+                'err' => $e->getMessage(),
+                'statusCode' => 409
+            ]);
+        }
+    }
+
+    public function prodCatHas($id){
+        // return 33;
+        try {
+            $data = ProductsCatModel::find($id)->subCategory;
+            return response()->json([
+                'msg' => 'Sub Category selection successful!', 
+                'data' => $data,
+                'statusCode' => 200]);
+        }catch(\Exception $e){
+            return response()->json([
+                'msg' => 'Failed to retrieve data!',
+                'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }

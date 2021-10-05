@@ -15,4 +15,8 @@ Class ProductsModel extends Model {
 
     protected $fillable = ['cat_id', 'product_title', 'product_sub_title', 'product_desc',
      'availability_status', 'unit', 'product_image', 'amount'];
+
+     public function ProductsCategory(){
+        return $this->hasOne('App\Models\ProductsSubCatModel', 'id', 'cat_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+// use App\Models\ProductsCatModel;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,6 +22,6 @@ Class ProductsSubCatModel extends Model {
     }
 
     public function ProductCategory(){
-        return $this->hasOne('App\ProductsCatModel');
+        return $this->hasOne('App\Models\ProductsCatModel', 'id', 'cat_id');
     }
 }
