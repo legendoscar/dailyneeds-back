@@ -20,10 +20,10 @@ class CreateStoreDiscountsTable extends Migration
             $table->string('discount_title')->nullable();
             $table->text('discount_body')->nullable();
             $table->enum('discount_type', ['price', 'quantity'])->default('price');
-            $table->enum('discount_condition', ['lteq', 'lt', 'eq', 'gt', 'gteq'])->default('gt');
-            $table->float('discount_threshold');
-            $table->enum('discount_cat', ['commission', 'amount'])->default('amount');
-            $table->float('discount_deduction')->default('0.00');
+            $table->enum('discount_condition', ['lteq', 'lt', 'eq', 'gt', 'gteq'])->default('gt')->nullable();
+            $table->float('discount_threshold')->nullable();
+            $table->enum('discount_cat', ['percentage', 'amount'])->default('percentage');
+            $table->float('discount_off')->default('0.00');
             // $table->float('discount_amount')->default('0.00');
             $table->dateTime('start_time');
             $table->dateTime('stop_time');

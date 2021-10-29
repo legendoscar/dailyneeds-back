@@ -18,6 +18,14 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'api'], function () use ($router) {
+
+    $router->get('category/store',  ['uses' => 'storecatController@showAllStoreCat']);
+    $router->get('category/store/{id:[0-9]+}', ['uses' => 'storecatController@getOnestorecat']);
+    // $router->get('storecat/{id:[0-9]+}/sub', ['uses' => 'storecatController@storecatHas']);
+    $router->post('category/store', ['uses' => 'storecatController@createstorecat']);
+    $router->put('storecat/{id}', ['uses' => 'storecatController@updateStoreCat']);
+    $router->delete('category/store/{id:[0-9]+}', ['uses' => 'storecatController@deletestorecat']);
+
     $router->get('prodcat',  ['uses' => 'ProdCatController@showAllProdCat']);
     $router->get('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@showOneProdCat']);
     $router->get('prodcat/{id:[0-9]+}/sub', ['uses' => 'ProdCatController@prodCatHas']);

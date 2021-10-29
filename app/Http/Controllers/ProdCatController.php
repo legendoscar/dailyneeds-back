@@ -39,7 +39,7 @@ class ProdCatController extends Controller
             !empty($data) 
                 ? $ret = response()->json([
                     'data'=> $data,
-                    'msg' => 'Record returned successfully.',
+                    'msg' => 'Record returned successfully.', 
                     'statusCode' => 200
                 ])
                 : $ret = response()->json([

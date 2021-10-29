@@ -15,30 +15,38 @@ class ProdSubCatController extends Controller
      * @return void
      */
 
-    public function showAllProdSubCat() 
+    public function showAllProdSubCat()
     {
 
-       try { 
-           return response()->json([
-            'data' => ProductsSubCatModel::all(),
-            'statusCode' => 200,
-            'msg' => 'Records returned successfully.'
-        ]);
+       try {
+           $data = ProductsSubCatModel::all();
+           !empty($data)
+           ? $ret = response()->json([
+               'data'=> $data,
+               'msg' => 'Record returned successfully.',
+               'statusCode' => 200
+           ])
+           : $ret = response()->json([
+           'msg' => 'No Record found.',
+           'statusCode' => 404
+       ]);
+
+       return $ret;
         }catch(\Exception $e){
             return response()->json([
-                'msg' => 'No record found!',
+                'msg' => 'Ooops! Error encountered!!',
                 'err' => $e->getMessage(),
                 'statusCode' => 409
             ]);
         }
     }
-    
+
 
     public function showOneprodSubCat(Request $request, $id)
     {
         try {
             $data = ProductsSubCatModel::find($id);
-        !empty($data) 
+        !empty($data)
             ? $ret = response()->json([
                 'data'=> $data,
                 'msg' => 'Record returned successfully.',
@@ -79,7 +87,7 @@ class ProdSubCatController extends Controller
             $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
             $destinationPath = app()->basePath($path);
             $request->file('sub_cat_image')->move($destinationPath, $image_name);
-            
+
             if(!$request->file('sub_cat_image')->isValid()){
                 return response()->json([
                     'msg' => 'Image upload not successful'
@@ -137,7 +145,7 @@ class ProdSubCatController extends Controller
         // $ProductsSubCatModel->update($request->all());
 
         return response()->json([
-            'data' => $ProductsSubCatModel, 
+            'data' => $ProductsSubCatModel,
             'msg' => 'Records updated successfully.',
             'statusCode' => 200]);
         }catch(\Exception $e){
@@ -157,7 +165,7 @@ class ProdSubCatController extends Controller
         try {
             ProductsSubCatModel::findorFail($id)->delete();
             return response()->json([
-                'msg' => 'Deleted successfully!', 
+                'msg' => 'Deleted successfully!',
                 'statusCode' => 200]);
             }catch(\Exception $e){
                 return response()->json([
@@ -171,11 +179,21 @@ class ProdSubCatController extends Controller
     public function prodSubCatBelongsTo($id){
         try {
             $data = ProductsSubCatModel::find($id)->ProductCategory;
-            return response()->json([
-                'msg' => 'Category selection successful!', 
-                'data' => $data,
-                'statusCode' => 200]);
-        }catch(\Exception $e){
+            !empty($data)
+            ? $ret = response()->json([
+                'data'=> $data,
+                'msg' => 'Record returned successfully.',
+                'statusCode' => 200
+            ])
+            : $ret = response()->json([
+            'msg' => 'No Record found.',
+            'statusCode' => 404
+        ]);
+
+        return $ret;
+
+    }
+    catch(\Exception $e){
             return response()->json([
                 'msg' => 'Failed to retrieve data!',
                 'err' => $e->getMessage(),
@@ -183,6 +201,4 @@ class ProdSubCatController extends Controller
             ]);
         }
     }
-
-    //
 }

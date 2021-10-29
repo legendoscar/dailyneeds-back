@@ -24,7 +24,7 @@ class CreateStoresTable extends Migration
             $table->enum('veri_status', ['unverified', 'verified'])->default('unverified');
             $table->enum('status', ['active', 'suspended', 'deactivated'])->default('active');
             $table->timestamps();
-            $table->softDeletes();
+            $table->softDeletes(); 
         });
     }
 

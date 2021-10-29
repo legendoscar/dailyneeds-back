@@ -16,7 +16,7 @@ class AddCategoryToStoresTable extends Migration
         Schema::table('stores', function (Blueprint $table) {
             $table->unsignedBigInteger('store_cat_id')->after('store_name');
 
-            $table->foreign('store_cat_id')->references('id')->on('store_category');
+            $table->foreign('store_cat_id')->references('id')->on('categories');
         });
     }
 

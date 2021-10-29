@@ -38,7 +38,7 @@ class ProductsController extends Controller
     {
         try {
         $data = ProductsModel::find($id);
-        !empty($data) 
+        !empty($data)
             ? $ret = response()->json([
                 'data'=> $data,
                 'msg' => 'Record returned successfully.',

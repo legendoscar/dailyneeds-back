@@ -23,7 +23,7 @@ class CreateProdSubCatTable extends Migration
             $table->softDeletes();
 
 
-            $table->foreign('cat_id')->references('id')->on('product_categories');
+            $table->foreign('cat_id')->references('id')->on('categories');
         });
     }
 
