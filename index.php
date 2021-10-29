@@ -29,4 +29,4 @@ use Auth0\SDK\Auth0;
 |
 */
 
-$app->run();
+$app->run(); 
