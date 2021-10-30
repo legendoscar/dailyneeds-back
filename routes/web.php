@@ -22,10 +22,10 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->get('category/store',  ['uses' => 'StoreCatController@showAllStoreCat']);
     $router->get('category/store/{id:[0-9]+}', ['uses' => 'StoreCatController@getOnestorecat']);
-    // $router->get('storecat/{id:[0-9]+}/sub', ['uses' => 'StoreCatController@storecatHas']);
-    $router->post('category/store', ['uses' => 'StoreCatController@createstorecat']);
-    $router->put('storecat/{id}', ['uses' => 'StoreCatController@updateStoreCat']);
-    $router->delete('category/store/{id:[0-9]+}', ['uses' => 'StoreCatController@deletestorecat']);
+    $router->post('category/store', ['uses' => 'StoreCatController@storeCatCreate']);
+    $router->put('category/store/{id}', ['uses' => 'StoreCatController@storeCatUpdate']);
+    $router->delete('category/store/{id:[0-9]+}', ['uses' => 'StoreCatController@storeCatDelete']);
+    $router->get('category/store/{id:[0-9]+}/sub', ['uses' => 'StoreCatController@storecatHas']);
 
     $router->get('prodcat',  ['uses' => 'ProdCatController@showAllProdCat']);
     $router->get('prodcat/{id:[0-9]+}', ['uses' => 'ProdCatController@showOneProdCat']);

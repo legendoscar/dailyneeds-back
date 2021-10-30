@@ -16,7 +16,7 @@ class StoreCatController extends Controller
 
     public function showAllStoreCat(CategoryModel $CategoryModel)
     {
-        return $CategoryModel->storeCatAll();
+        return $CategoryModel->storeCatGetAll();
 
     }
 
@@ -28,61 +28,45 @@ class StoreCatController extends Controller
     }
 
 
-    public function createStoreCat(Request $request, CategoryModel $CategoryModel)
-    {
-// return 33;
-        // return $id = $request->input('');
-        $CategoryModel = new CategoryModel;
-        return 3;$CategoryModel->storeCatCreate($request);
+    public function validData(Request $request){
 
-        // return $
-    }
-
-
-    public function updateStoreCat($id, Request $request)
-    {
-
-        $this->validate($request, [
-            'store_cat_title' => 'bail|unique:store_category|string',
-            'store_cat_desc' => 'bail|string',
-            'store_cat_image' => 'bail',
+        return $this->validate($request, [
+            'cat_title' => 'bail|required|unique:categories|string',
+            'cat_desc' => 'bail|string',
+            'cat_type' => 'bail|numeric|required',
+            'cat_image' => 'bail|file',
         ]);
 
-        // return $request->store_cat_image;
-        if($request->hasFile('store_cat_image')){
-            return $image_name = $request->store_cat_image->getClientOriginalName();
-
-            $path = 'public' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-            $destinationPath = app()->basePath($path);
-            $request->file('store_cat_image')->move($destinationPath, $image_name);
-
-        }
-
-        try {
-            $request->updated_at = Carbon::now()->toDateTimeString();
-
-            $CategoryModel = CategoryModel::findorFail($id);
-
-            $CategoryModel->store_cat_title = $request->has('store_cat_title') ? $request->store_cat_title : $CategoryModel->store_cat_title;
-            $CategoryModel->store_cat_desc = $request->has('store_cat_desc') ? $request->store_cat_desc : $CategoryModel->store_cat_desc;
-            $CategoryModel->store_cat_image = $request->has('store_cat_image') ? $request->store_cat_image : $CategoryModel->store_cat_image;
-            $CategoryModel->save();
-
-            return response()->json([
-                'data' => $CategoryModel,
-                'msg' => 'Records updated successfully.',
-                'statusCode' => 200]);
-        }
-        catch(\Exception $e){
-            return response()->json([
-                'msg' => 'Update operation failed!',
-                'err' => $e->getMessage(),
-                'statusCode' => 409
-            ]);
-        }
     }
 
-    public function deleteStoreCat(Request $request, CategoryModel $CategoryModel)
+    public function storeCatCreate(Request $request, CategoryModel $CategoryModel)
+    {
+
+        $validData=$this->validData($request);
+
+        $CategoryModel = new CategoryModel;
+
+        return $CategoryModel->storeCatCreate($request);
+
+    }
+
+
+    public function storeCatUpdate(Request $request)
+    {
+        $this->validate($request, [
+            'cat_title' => 'bail|unique:categories|string',
+            'cat_desc' => 'bail|string',
+            'cat_type' => 'bail|numeric',
+            'cat_image' => 'bail|file',
+        ]);
+
+        $CategoryModel = new CategoryModel;
+
+        return $CategoryModel->storeCatUpdate($request);
+    }
+
+
+    public function storeCatDelete(Request $request, CategoryModel $CategoryModel)
     {
         $id = $request->id;
         return $CategoryModel->storeCatDeleteOne($id);
